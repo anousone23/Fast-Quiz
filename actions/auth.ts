@@ -3,13 +3,18 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://fast-quiz-kappa.vercel.app"
+    : "http://localhost:3000";
+
 export async function loginAction() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `https://fast-quiz-kappa.vercel.app/auth/callback`,
+      redirectTo: `${BASE_URL}/auth/callback`,
       scopes: "https://www.googleapis.com/auth/forms.body",
     },
   });
