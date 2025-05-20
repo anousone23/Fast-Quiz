@@ -9,7 +9,7 @@ export async function loginAction() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.SITE_URL}/auth/callback`,
+      redirectTo: `http://localhost:3000/auth/callback`,
       scopes: "https://www.googleapis.com/auth/forms.body",
     },
   });
