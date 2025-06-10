@@ -88,32 +88,46 @@ async function addQuestionItem({
   questions: { text: string; choices: string[]; answer: string }[];
 }) {
   //Add questions using batchUpdate
-  const requests = questions.map((q, index) => ({
-    createItem: {
-      item: {
-        title: q.text,
-        questionItem: {
-          question: {
-            required: true,
-            choiceQuestion: {
-              type: "RADIO",
-              options: q.choices.map((choice) => ({ value: choice })),
-              shuffle: false,
-            },
-            grading: {
-              pointValue: 1,
-              correctAnswers: {
-                answers: [{ value: q.answer }],
+
+  const requests = questions.map((q, index) => {
+    const trimmedChoices = q.choices.map((choice) => choice.trim());
+    const trimmedAnswer = q.answer.trim();
+
+    if (!trimmedChoices.includes(trimmedAnswer)) {
+      throw new Error(
+        `Answer "${trimmedAnswer}" not found in choices: ${trimmedChoices.join(
+          ", "
+        )}`
+      );
+    }
+
+    return {
+      createItem: {
+        item: {
+          title: q.text,
+          questionItem: {
+            question: {
+              required: true,
+              choiceQuestion: {
+                type: "RADIO",
+                options: trimmedChoices.map((choice) => ({ value: choice })),
+                shuffle: false,
+              },
+              grading: {
+                pointValue: 1,
+                correctAnswers: {
+                  answers: [{ value: trimmedAnswer }],
+                },
               },
             },
           },
         },
+        location: {
+          index,
+        },
       },
-      location: {
-        index,
-      },
-    },
-  }));
+    };
+  });
 
   const batchUpdateRes = await fetch(
     `https://forms.googleapis.com/v1/forms/${formId}:batchUpdate`,
