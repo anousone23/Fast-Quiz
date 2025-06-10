@@ -45,8 +45,8 @@ export default function PdfDetailsFooter({
       // Step 2: Format for Google Form
       const formattedQuestions = questionsWithChoices.map((q) => ({
         text: q.text,
-        choices: q.choices.map((c) => c.text),
-        answer: q.answer,
+        choices: q.choices.map((c) => c.text.trim()),
+        answer: q.answer.trim(),
       }));
 
       // Step 3: Call your Google Form function

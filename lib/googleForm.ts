@@ -100,12 +100,12 @@ async function addQuestionItem({
               options: q.choices.map((choice) => ({ value: choice })),
               shuffle: false,
             },
-            // grading: {
-            //   pointValue: 1,
-            //   correctAnswers: {
-            //     answers: [{ value: q.answer }],
-            //   },
-            // },
+            grading: {
+              pointValue: 1,
+              correctAnswers: {
+                answers: [{ value: q.answer }],
+              },
+            },
           },
         },
       },
