@@ -31,7 +31,6 @@ export default function PdfDetailsFooter({
         throw new Error("Google access token not found");
       }
 
-      // Step 1: Fetch choices for all questions in parallel
       const questionsWithChoices = await Promise.all(
         questions.map(async (q) => {
           const choices = await getAllQuestionChoicesClient(q.id);
@@ -42,14 +41,15 @@ export default function PdfDetailsFooter({
         })
       );
 
-      // Step 2: Format for Google Form
       const formattedQuestions = questionsWithChoices.map((q) => ({
         text: q.text,
         choices: q.choices.map((c) => c.text),
         answer: q.answer,
       }));
 
-      // Step 3: Call your Google Form function
+      // Open a blank tab immediately to avoid popup blocker
+      const newTab = window.open("", "_blank");
+
       const form = await createGoogleFormQuiz(
         accessToken,
         pdf?.name || "Quiz",
@@ -58,14 +58,14 @@ export default function PdfDetailsFooter({
 
       toast.success("Google form created successfully");
 
-      window.open(
-        `https://docs.google.com/forms/d/${form.formId}/edit`,
-        "_blank"
-      );
+      if (newTab && form.formId) {
+        newTab.location.href = `https://docs.google.com/forms/d/${form.formId}/edit`;
+      } else {
+        throw new Error("Failed to open form. Form ID may be missing.");
+      }
     } catch (err) {
-      throw new Error(
-        "Failed to create Google Form: " + (err as Error).message
-      );
+      toast.error((err as Error).message || "Failed to create Google Form.");
+      console.error(err);
     } finally {
       setIsLoaidng(false);
     }
