@@ -11,7 +11,11 @@ export async function loginAction() {
     provider: "google",
     options: {
       redirectTo: `${BASE_URL}/auth/callback`,
-      scopes: "https://www.googleapis.com/auth/forms.body",
+      scopes: [
+        "https://www.googleapis.com/auth/forms",
+        "https://www.googleapis.com/auth/forms.body",
+        "https://www.googleapis.com/auth/drive.file",
+      ].join(" "),
     },
   });
 
