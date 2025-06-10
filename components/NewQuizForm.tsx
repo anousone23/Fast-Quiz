@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { BarLoader } from "react-spinners";
 
 import { RxCross2 } from "react-icons/rx";
 import {
@@ -62,6 +63,22 @@ export default function NewQuizForm() {
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Clear the actual input
     }
+  }
+
+  if (isPending) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-y-2">
+        <p>Generating ...</p>
+        <BarLoader
+          color={"#fafafa"}
+          loading={true}
+          className="rounded-sm"
+          cssOverride={{ width: 320 }}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+    );
   }
 
   return (
@@ -129,7 +146,7 @@ export default function NewQuizForm() {
           className="bg-zinc-700 border border-zinc-600 hover:bg-zinc-600 transition-all duration-200"
           disabled={isPending}
         >
-          {isPending ? "Generating..." : "Generate quiz"}
+          Generate quiz
         </Button>
       </div>
 

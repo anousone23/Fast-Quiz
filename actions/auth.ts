@@ -1,12 +1,8 @@
 "use server";
 
+import { BASE_URL } from "@/lib/constant";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-
-const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://fast-quiz-kappa.vercel.app"
-    : "http://localhost:3000";
 
 export async function loginAction() {
   const supabase = await createClient();

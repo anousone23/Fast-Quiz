@@ -20,6 +20,9 @@ export async function renamePdfAction(prevState, formData: FormData) {
     return { success: false, error: "Name is required", name: prevState.name };
   }
 
+  if (prevState.name.trim() === name.trim())
+    return { success: false, error: null, name: prevState.name };
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -69,7 +72,7 @@ export async function deletePdfAction(prevState, formData: FormData) {
     redirect(`/`);
   }
 
-  revalidatePath(`/pdf`);
+  revalidatePath(`/pdf/${pdfId}`);
 
   return {
     success: true,

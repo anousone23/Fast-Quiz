@@ -83,3 +83,24 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return copy;
 }
+
+export function isImageFile(file) {
+  const acceptedImageTypes = [
+    "image/gif",
+    "image/jpeg",
+    "image/png",
+    "image/bmp",
+    "image/webp",
+  ];
+  return file && acceptedImageTypes.includes(file.type);
+}
+
+export function formatDateToDDMMYYYY(dateInput: string | Date): string {
+  const date = new Date(dateInput);
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}

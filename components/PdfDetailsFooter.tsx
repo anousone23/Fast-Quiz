@@ -7,6 +7,8 @@ import { createGoogleFormQuiz } from "@/lib/googleForm";
 import { createClient } from "@/utils/supabase/client";
 import { IPdf, IQuestion } from "@/types";
 import Link from "next/link";
+import { BarLoader } from "react-spinners";
+import toast from "react-hot-toast";
 
 export default function PdfDetailsFooter({
   pdf,
@@ -54,6 +56,8 @@ export default function PdfDetailsFooter({
         formattedQuestions
       );
 
+      toast.success("Google form created successfully");
+
       window.open(
         `https://docs.google.com/forms/d/${form.formId}/edit`,
         "_blank"
@@ -65,6 +69,24 @@ export default function PdfDetailsFooter({
     } finally {
       setIsLoaidng(false);
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="bg-zinc-700 flex flex-col items-center justify-center rounded-sm py-4 gap-y-2">
+        <p className="text-sm md:text-base text-white">
+          Creating google form ...
+        </p>
+
+        <BarLoader
+          color={"#fafafa"}
+          loading={true}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          className="rounded-sm"
+        />
+      </div>
+    );
   }
 
   return (

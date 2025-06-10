@@ -17,6 +17,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { deletePdfAction, renamePdfAction } from "@/actions/pdf";
+import toast from "react-hot-toast";
 
 export default function CustomSideBarMenuItem({ pdf }: { pdf: IPdf }) {
   const pathname = usePathname();
@@ -45,22 +46,24 @@ export default function CustomSideBarMenuItem({ pdf }: { pdf: IPdf }) {
 
   useEffect(() => {
     if (renameState.success) {
+      toast.success("PDF renamed successfully");
       setEditMode(false);
     }
+  }, [renameState.success]);
 
+  useEffect(() => {
     if (deleteState.success) {
+      toast.success("PDF deleted successfully");
       setDeleteMode(false);
     }
-  }, [renameState.success, deleteState.success]);
+  }, [deleteState.success]);
 
   return (
     <SidebarMenuItem>
       {!editMode && (
         <div>
           <SidebarMenuButton
-            className={`hover:bg-zinc-600 transition-all duration-200 data-[active=true]:bg-zinc-600 flex items-center justify-between ${
-              pdf.name.length > 15 && "py-8"
-            }`}
+            className={`hover:bg-zinc-600 transition-all duration-200 data-[active=true]:bg-zinc-600 flex items-center justify-between `}
             isActive={isActive}
           >
             <Link href={`/pdf/${pdf.id}`}>
@@ -75,28 +78,32 @@ export default function CustomSideBarMenuItem({ pdf }: { pdf: IPdf }) {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="bg-zinc-700 border border-zinc-600 text-white">
-                <DropdownMenuItem className="hover:bg-zinc-600! transition-all duration-200">
+                <DropdownMenuItem
+                  className="hover:bg-zinc-600! transition-all duration-200"
+                  onClick={() => {
+                    if (deleteMode) setDeleteMode(false);
+
+                    setEditMode(true);
+                  }}
+                >
                   <button
                     type="button"
                     className="flex items-center gap-x-4 text-white text-xs md:text-sm"
-                    onClick={() => {
-                      if (deleteMode) setDeleteMode(false);
-
-                      setEditMode(true);
-                    }}
                   >
                     Rename
                   </button>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-zinc-600! transition-all duration-200">
+                <DropdownMenuItem
+                  className="hover:bg-zinc-600! transition-all duration-200"
+                  onClick={() => {
+                    if (editMode) setEditMode(false);
+
+                    setDeleteMode(true);
+                  }}
+                >
                   <button
                     type="button"
                     className="flex items-center gap-x-4 text-white text-xs md:text-sm"
-                    onClick={() => {
-                      if (editMode) setEditMode(false);
-
-                      setDeleteMode(true);
-                    }}
                   >
                     Delete
                   </button>

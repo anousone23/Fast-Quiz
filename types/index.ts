@@ -25,4 +25,23 @@ export interface IChoice {
   text: string;
 }
 
+export interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+  coins: number;
+  status: string;
+}
+
+export interface IPayment {
+  id: string;
+  userId: string;
+  amount: string;
+  image: string;
+  status: string;
+  created_at: Date;
+  reject_reason: string;
+}
+
 ///////////////////////////////

@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/client";
 
 export async function getAllPdfsClient() {
   const supabase = createClient();
-  const userId = (await supabase.auth.getUser()).data.user?.id;
+  const userId = (await supabase.auth.getSession()).data.session?.user.id;
 
   if (!userId) throw new Error("User is not authenticated");
 

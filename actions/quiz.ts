@@ -1,5 +1,6 @@
 "use server";
 
+import { checkCoin, removeCoin } from "@/lib/supabase/server/coin";
 import { createPdf } from "@/lib/supabase/server/pdf";
 import { createQuestions, generateQuiz } from "@/lib/supabase/server/question";
 import { revalidatePath } from "next/cache";
@@ -41,6 +42,8 @@ export async function createQuizAction(prevState, formData: FormData) {
       };
     }
 
+    await checkCoin();
+
     const { quizData, fileName } = await generateQuiz({
       file,
       language,
@@ -50,6 +53,7 @@ export async function createQuizAction(prevState, formData: FormData) {
 
     const pdfId = await createPdf(fileName);
     await createQuestions({ type: questionType, questions: quizData, pdfId });
+    await removeCoin();
 
     revalidatePath("/");
 
