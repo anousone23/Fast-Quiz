@@ -23,7 +23,7 @@ Your task is to read the provided document and generate a list of exactly ${numb
     isMultipleChoice ? "multiple-choice" : "true/false"
   } questions based on its contents.
 
-Follow these requirements strictly:
+Strict requirements:
 - Format the entire response as a valid JSON array.
 - Each item in the array must be an object with the following fields:
   - "text" (${isEnglish ? "string in English" : "string in Thai"})
@@ -36,10 +36,15 @@ Follow these requirements strictly:
           !isEnglish ? " in Thai" : ""
         })`
   }
-  - "answer" (must match one of the choices)
+  - "answer" (must be **exactly equal to one of the strings in "choices"** — no paraphrasing, rewording, or abbreviated forms)
   - "type" (must be "${type}")${languageNote}
 
-Respond only with valid JSON — do not include any explanations or formatting outside the JSON block.
+Additional instructions:
+- Ensure "answer" is **identical** to one of the "choices" values (case-sensitive, no partial matches).
+- Do not invent new wording in the answer that does not appear in "choices".
+- Avoid paraphrasing. Use the exact strings.
+
+Respond only with valid JSON — no explanations or formatting outside the JSON block.
 
 Example:
 [
