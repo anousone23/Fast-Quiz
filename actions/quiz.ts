@@ -1,5 +1,6 @@
 "use server";
 
+import { del as deleteBlob } from "@vercel/blob";
 import { checkCoin, removeCoin } from "@/lib/supabase/server/coin";
 import { createPdf } from "@/lib/supabase/server/pdf";
 import { createQuestions, generateQuiz } from "@/lib/supabase/server/question";
@@ -71,11 +72,31 @@ export async function createQuizAction(prevState, formData: FormData) {
     await createQuestions({ type: questionType, questions: quizData, pdfId });
     await removeCoin();
 
+    // Delete the blob after processing
+    try {
+      await deleteBlob(blobUrl);
+      console.log("Blob deleted successfully:", blobUrl);
+    } catch (deleteError) {
+      console.error("Failed to delete blob:", deleteError);
+      // Don't fail the entire operation if blob deletion fails
+    }
+
     revalidatePath("/");
 
     return { success: true, error: null, pdfId };
   } catch (err) {
     console.error("Quiz creation error:", err);
+
+    // Clean up blob if quiz generation failed
+    if (formData.get("blobUrl")) {
+      try {
+        await deleteBlob(formData.get("blobUrl") as string);
+        console.log("Blob cleaned up after error");
+      } catch (deleteError) {
+        console.error("Failed to clean up blob after error:", deleteError);
+      }
+    }
+
     return {
       success: false,
       error: (err as Error).message || "Failed to generate quiz.",
