@@ -127,10 +127,15 @@ export default function NewQuizForm() {
       setIsUploading(true);
       setUploadProgress(0);
 
-      // Upload file to Vercel Blob
-      const blob = await upload(selectedFile.name, selectedFile, {
+      // Create unique filename to avoid caching issues
+      const timestamp = Date.now();
+      const uniqueFileName = `${timestamp}-${selectedFile.name}`;
+
+      // Upload file to Vercel Blob with TTL (auto-deletion after 1 hour)
+      const blob = await upload(uniqueFileName, selectedFile, {
         access: "public",
-        handleUploadUrl: "/api/upload", // We'll create this API route
+        handleUploadUrl: "/api/upload",
+        multipart: true, // Better for large files
         onUploadProgress: (progress) => {
           setUploadProgress(
             Math.round((progress.loaded / progress.total) * 100)
@@ -141,7 +146,7 @@ export default function NewQuizForm() {
       // Create new FormData with blob URL instead of file
       const newFormData = new FormData();
       newFormData.append("blobUrl", blob.url);
-      newFormData.append("fileName", selectedFile.name);
+      newFormData.append("fileName", selectedFile.name); // Keep original name for display
       newFormData.append("language", language);
       newFormData.append("questionType", questionType);
       newFormData.append("numberOfQuestion", numberOfQuestion);

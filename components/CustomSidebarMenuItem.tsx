@@ -63,7 +63,9 @@ export default function CustomSideBarMenuItem({ pdf }: { pdf: IPdf }) {
       {!editMode && (
         <div>
           <SidebarMenuButton
-            className={`hover:bg-zinc-600 transition-all duration-200 data-[active=true]:bg-zinc-600 flex items-center justify-between `}
+            className={`hover:bg-zinc-600 transition-all duration-200 data-[active=true]:bg-zinc-600 flex items-center justify-between ${
+              pdf.name.length > 15 && "py-8"
+            }`}
             isActive={isActive}
           >
             <Link href={`/pdf/${pdf.id}`}>
