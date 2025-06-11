@@ -23,6 +23,8 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { createQuizAction } from "@/actions/quiz";
 import { redirect } from "next/navigation";
+import toast from "react-hot-toast";
+import { checkCoinClient } from "@/lib/supabase/client/coin";
 
 export default function NewQuizForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -65,14 +67,14 @@ export default function NewQuizForm() {
 
     // Validate file type
     if (file.type !== "application/pdf") {
-      alert("Please select a PDF file");
+      toast.error("Please select a PDF file");
       return;
     }
 
     // Check file size (optional client-side check)
     if (file.size > 50 * 1024 * 1024) {
       // 50MB limit for Vercel Blob
-      alert("File size must be less than 50MB");
+      toast.error("File size must be less than 50MB");
       return;
     }
 
@@ -93,7 +95,7 @@ export default function NewQuizForm() {
     e.preventDefault();
 
     if (!selectedFile) {
-      alert("Please select a PDF file");
+      toast.error("Please select a PDF file");
       return;
     }
 
@@ -104,26 +106,28 @@ export default function NewQuizForm() {
 
     // Validate form data
     if (!language || !["english", "thai"].includes(language)) {
-      alert("Please select a valid language");
+      toast.error("Please select a valid language");
       return;
     }
 
     if (!["multiple-choice", "true-false"].includes(questionType)) {
-      alert("Please select a valid question type");
+      toast.error("Please select a valid question type");
       return;
     }
 
     if (!numberOfQuestion || isNaN(Number(numberOfQuestion))) {
-      alert("Please enter a valid number of questions");
+      toast.error("Please enter a valid number of questions");
       return;
     }
 
     if (+numberOfQuestion < 1 || +numberOfQuestion > 50) {
-      alert("Number of questions must be between 1 and 50");
+      toast.error("Number of questions must be between 1 and 50");
       return;
     }
 
     try {
+      await checkCoinClient();
+
       setIsUploading(true);
       setUploadProgress(0);
 
@@ -155,7 +159,7 @@ export default function NewQuizForm() {
       formAction(newFormData);
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
+      toast.error("Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
     }

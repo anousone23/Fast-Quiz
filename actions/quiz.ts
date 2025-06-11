@@ -1,9 +1,9 @@
 "use server";
 
-import { del as deleteBlob } from "@vercel/blob";
-import { checkCoin, removeCoin } from "@/lib/supabase/server/coin";
+import { removeCoin } from "@/lib/supabase/server/coin";
 import { createPdf } from "@/lib/supabase/server/pdf";
 import { createQuestions, generateQuiz } from "@/lib/supabase/server/question";
+import { del as deleteBlob } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 
 export async function createQuizAction(prevState, formData: FormData) {
@@ -48,8 +48,6 @@ export async function createQuizAction(prevState, formData: FormData) {
         error: "Number of questions must be between 1 and 50.",
       };
     }
-
-    await checkCoin();
 
     // Fetch the PDF from the blob URL
     const response = await fetch(blobUrl);
