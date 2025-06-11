@@ -127,7 +127,11 @@ export default function NewQuizForm() {
 
     try {
       await checkCoinClient();
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
 
+    try {
       setIsUploading(true);
       setUploadProgress(0);
 
