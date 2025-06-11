@@ -11,6 +11,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       onBeforeGenerateToken: async (pathname, clientPayload) => {
         // Add any validation logic here
         // For example, check file size, user authentication, etc.
+        console.log("Cleint paylad:", clientPayload);
 
         // Validate file type from pathname
         if (!pathname.toLowerCase().endsWith(".pdf")) {
@@ -28,6 +29,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       onUploadCompleted: async ({ blob, tokenPayload }) => {
         // This runs after successful upload
         // You can add any post-upload logic here
+        console.log("Token payload:", tokenPayload);
+
         console.log("Upload completed:", blob.url);
 
         try {
