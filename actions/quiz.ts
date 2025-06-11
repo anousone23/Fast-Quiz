@@ -7,17 +7,23 @@ import { revalidatePath } from "next/cache";
 
 export async function createQuizAction(prevState, formData: FormData) {
   try {
-    const file = formData.get("file") as File;
+    const blobUrl = formData.get("blobUrl") as string;
+    const fileName = formData.get("fileName") as string;
     const questionType = formData.get("questionType") as string;
     const language = formData.get("language") as string;
     const numberOfQuestion = formData.get("numberOfQuestion") as string;
 
-    // check file type
-    if (!file || file.type !== "application/pdf") {
-      return { success: false, error: "Invalid or missing file." };
+    // Validate blob URL
+    if (!blobUrl || !blobUrl.startsWith("https://")) {
+      return { success: false, error: "Invalid file URL." };
     }
 
-    // check language
+    // Validate file name
+    if (!fileName || !fileName.toLowerCase().endsWith(".pdf")) {
+      return { success: false, error: "Invalid file name." };
+    }
+
+    // Validate language
     if (!language) {
       return { success: false, error: "Language is required." };
     }
@@ -25,12 +31,12 @@ export async function createQuizAction(prevState, formData: FormData) {
       return { success: false, error: "Invalid language." };
     }
 
-    // check question type
+    // Validate question type
     if (!["multiple-choice", "true-false"].includes(questionType)) {
       return { success: false, error: "Invalid question type." };
     }
 
-    // check number of questions
+    // Validate number of questions
     if (!numberOfQuestion || isNaN(Number(numberOfQuestion))) {
       return { success: false, error: "Invalid number of questions." };
     }
@@ -44,7 +50,17 @@ export async function createQuizAction(prevState, formData: FormData) {
 
     await checkCoin();
 
-    const { quizData, fileName } = await generateQuiz({
+    // Fetch the PDF from the blob URL
+    const response = await fetch(blobUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch PDF from blob storage");
+    }
+
+    // Convert to File object for compatibility with existing generateQuiz function
+    const arrayBuffer = await response.arrayBuffer();
+    const file = new File([arrayBuffer], fileName, { type: "application/pdf" });
+
+    const { quizData } = await generateQuiz({
       file,
       language,
       type: questionType,
@@ -59,6 +75,7 @@ export async function createQuizAction(prevState, formData: FormData) {
 
     return { success: true, error: null, pdfId };
   } catch (err) {
+    console.error("Quiz creation error:", err);
     return {
       success: false,
       error: (err as Error).message || "Failed to generate quiz.",
