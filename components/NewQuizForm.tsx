@@ -129,6 +129,7 @@ export default function NewQuizForm() {
       await checkCoinClient();
     } catch (error) {
       toast.error((error as Error).message);
+      return;
     }
 
     try {
