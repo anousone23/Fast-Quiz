@@ -68,8 +68,8 @@ export default function CustomSideBarMenuItem({ pdf }: { pdf: IPdf }) {
             }`}
             isActive={isActive}
           >
-            <Link href={`/pdf/${pdf.id}`}>
-              <span className="text-sm md:text-base text-white">
+            <Link href={`/pdf/${pdf.id}`} className="flex-1">
+              <span className="text-sm text-white block max-w-[160px] break-words">
                 {pdf.name}
               </span>
             </Link>
